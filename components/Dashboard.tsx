@@ -58,7 +58,7 @@ export default function Dashboard({ onTransfer }: { onTransfer: () => void }) {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 16, fontWeight: 700, color: 'white',
             }}>S</div>
-            <span style={{ fontSize: 15, fontWeight: 600 }}>Hi, Sofia!</span>
+            <span style={{ fontSize: 15, fontWeight: 600 }}>Hi, Maise Williams!</span>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button style={{ background: 'var(--surface)', border: 'none', borderRadius: 10, width: 36, height: 36, cursor: 'pointer', fontSize: 16 }}>🔔</button>

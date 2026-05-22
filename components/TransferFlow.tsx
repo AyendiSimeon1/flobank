@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 
-type Step = 'recipient' | 'amount' | 'bank-details' | 'review' | 'processing' | 'failed'
+type Step = 'recipient' | 'amount' | 'bank-details' | 'processing' | 'failed'
 
 interface TransferData {
   recipientName: string
@@ -22,7 +22,7 @@ const US_BANKS = [
 ]
 
 function ProgressBar({ step }: { step: Step }) {
-  const steps: Step[] = ['recipient', 'amount', 'bank-details', 'review']
+  const steps: Step[] = ['recipient', 'amount', 'bank-details']
   const current = steps.indexOf(step)
   if (current === -1) return null
   return (
@@ -81,9 +81,14 @@ export default function TransferFlow({ onBack }: { onBack: () => void }) {
 
   const next = () => {
     if (!validate()) return
-    const flow: Step[] = ['recipient', 'amount', 'bank-details', 'review', 'processing', 'failed']
+    const flow: Step[] = ['recipient', 'amount', 'bank-details', 'processing', 'failed']
     const i = flow.indexOf(step)
     setStep(flow[i + 1])
+  }
+
+  const submit = () => {
+    if (!validate()) return
+    submitTransfer()
   }
 
   const submitTransfer = () => {
@@ -120,7 +125,7 @@ export default function TransferFlow({ onBack }: { onBack: () => void }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '20px 20px 0' }}>
           <button
             onClick={step === 'recipient' ? onBack : () => {
-              const flow: Step[] = ['recipient', 'amount', 'bank-details', 'review']
+              const flow: Step[] = ['recipient', 'amount', 'bank-details']
               const i = flow.indexOf(step)
               if (i > 0) setStep(flow[i - 1])
               else onBack()
@@ -331,60 +336,16 @@ export default function TransferFlow({ onBack }: { onBack: () => void }) {
               <span>Your banking information is encrypted and never stored on our servers.</span>
             </div>
 
-            <button className="btn-primary" onClick={next}>Review Transfer →</button>
-          </div>
-        )}
-
-        {/* STEP 4: Review */}
-        {step === 'review' && (
-          <div className="animate-slide-up">
-            <ProgressBar step={step} />
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Review & Confirm</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Double-check everything before sending</p>
-            </div>
-
-            {/* Amount hero */}
-            <div className="card" style={{ padding: '24px', marginBottom: 16, textAlign: 'center', background: 'var(--accent)' }}>
-              <div style={{ fontSize: 13, fontWeight: 600, opacity: 0.6, marginBottom: 6 }}>SENDING</div>
-              <div style={{ fontSize: 44, fontWeight: 800, letterSpacing: '-2px' }}>
-                ${parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-              <div style={{ fontSize: 13, opacity: 0.6, marginTop: 6 }}>USD · ACH Standard</div>
-            </div>
-
-            <div className="card" style={{ padding: '0', marginBottom: 16, overflow: 'hidden' }}>
-              {[
-                { label: 'To', value: data.recipientName },
-                { label: 'Email', value: data.recipientEmail },
-                { label: 'Bank', value: data.bankName },
-                { label: 'Account', value: `${data.accountType.charAt(0).toUpperCase() + data.accountType.slice(1)} ••••${data.accountNumber.slice(-4)}` },
-                { label: 'Routing', value: `••••••${data.routingNumber.slice(-3)}` },
-                { label: 'Arrives', value: '1–3 business days' },
-                { label: 'Fee', value: 'Free' },
-                ...(data.memo ? [{ label: 'Memo', value: data.memo }] : []),
-              ].map((row, i, arr) => (
-                <div key={row.label} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-                  padding: '14px 18px',
-                  borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none',
-                }}>
-                  <span style={{ color: 'var(--text-muted)', fontSize: 14 }}>{row.label}</span>
-                  <span style={{ fontWeight: 600, fontSize: 14, textAlign: 'right', maxWidth: '60%', wordBreak: 'break-all' }}>{row.value}</span>
-                </div>
-              ))}
-            </div>
-
             <div style={{
               background: '#f0fdf4', border: '1px solid #bbf7d0',
               borderRadius: 14, padding: '12px 16px',
-              marginBottom: 20, fontSize: 13, color: '#166534', display: 'flex', gap: 8,
+              marginBottom: 16, fontSize: 13, color: '#166534', display: 'flex', gap: 8,
             }}>
               <span>✅</span>
               <span>By confirming, you authorize Flo to initiate this ACH transfer from your account.</span>
             </div>
 
-            <button className="btn-accent" onClick={submitTransfer} style={{ fontSize: 16, fontWeight: 700 }}>
+            <button className="btn-primary" onClick={submit} style={{ fontSize: 16, fontWeight: 700 }}>
               Confirm & Send $
               {parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </button>

@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 
-const VALID_EMAIL = 'sofiavergara@gmail.com'
-const VALID_PASS = 'privatesofia1'
+const VALID_EMAIL = 'maisewilliams@gmail.com'
+const VALID_PASS = 'privatemaise'
 
 export default function Login({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState('')
